@@ -48,7 +48,7 @@ export function Home() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={() => (
           <View style={{ flex: 1, alignItems: "center", paddingTop: 24 }}>
-            <Text style={{ color: "#828282", fontSize: 16 }}>Nenhum item adicionado</Text>
+            <Text style={{ color: "#828282", fontSize: 16 }}>Nenhum item</Text>
           </View>
         )}
         />
