@@ -1,4 +1,4 @@
-import { View, Image, TouchableOpacity, Text, FlatList} from "react-native";
+import { View, Image, TouchableOpacity, Text, FlatList, Alert} from "react-native";
 import { styles } from "./styles";
 import logoImg from "@/assets/logo.png";
 import { ButtonApp } from "@/components/Button";
@@ -6,29 +6,50 @@ import { InputApp } from "@/components/Input";
 import { Filter } from "@/components/Filter";
 import { FilterStatus } from "@/types/filterStatus";
 import { Item } from "@/components/Item";
-
+import { useState } from "react";
 // Definindo os status de filtro disponíveis, importando o tipo FilterStatus
 const FILTER_STATUS: FilterStatus[] = [FilterStatus.PENDENTE, FilterStatus.CONCLUIDO];
-
-// Array de itens de exemplo, ID deve ser único pois é usado como chave no FlatList
-const ITENS = [
-  { id: "1", status: FilterStatus.PENDENTE, description: "Cafe" },
-  { id: "2", status: FilterStatus.CONCLUIDO, description: "Almoço" },
-  { id: "3", status: FilterStatus.PENDENTE, description: "Jantar" },
-]
 export function Home() {
+  // Estado para armazenar o status do filtro ativo
+  const [activeFilter, setActiveFilter] = useState(FilterStatus.PENDENTE);
+
+  // Estado para armazenar os itens da lista de compras
+  const [items, setItems] = useState<any>([]);
+  const [description, setDescription] = useState("");
+
+  function handleAddItem() {
+    if (!description.trim()) {
+      return Alert.alert("Atenção", "Informe a descrição do item.");
+    }
+    const newItem = {
+      id: Math.random().toString(36).substring(7), // Gerando um ID único
+      description,
+      status: FilterStatus.PENDENTE,
+    }
+    setItems((prevState: any[]) => [...prevState, newItem]); 
+    setDescription(""); // Limpa o campo de entrada após adicionar o item
+  }
   return (
     <View style={styles.container}>
       <Image source={logoImg} style={styles.logo} />
       <View style={styles.form}>
-        <InputApp placeholder="O que deseja comprar?" />
-        <ButtonApp />
+        <InputApp 
+        placeholder="O que deseja comprar?"
+        onChangeText={setDescription}
+        value={description}
+        autoCorrect={false}
+        />
+        <ButtonApp onAdd={handleAddItem}/>
       </View>
       <View style={styles.content}>
         <View style={styles.header}>
         {
           FILTER_STATUS.map((status) => (
-            <Filter key={status} status={status} isActive />
+            <Filter key={status} 
+            status={status} 
+            isActive={status === activeFilter}
+            onPress={() => setActiveFilter(status)}
+            />
           ))
         }
         <TouchableOpacity style={styles.clearButton}>
@@ -36,7 +57,7 @@ export function Home() {
         </TouchableOpacity>
         </View>
         <FlatList 
-        data={ITENS}
+        data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Item 

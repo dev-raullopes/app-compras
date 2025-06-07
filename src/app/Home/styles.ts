@@ -27,7 +27,6 @@ export const styles = StyleSheet.create({
     marginTop: 24,
   },
   header: {
-    backgroundColor: "#b2b2b2",
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
